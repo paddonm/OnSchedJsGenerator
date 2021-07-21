@@ -8,6 +8,47 @@
   max-width: 350px;
 } */
 
+.booking-steps .booking-step {
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
+}
+
 .booking-steps .active {
-  border: 2px solid blue;
+  background-color: var(--primary-light);
+  border-radius: 6px;
+}
+
+.booking-steps-container {
+  display: flex;
+}
+
+.booking-steps, .settings {
+  width: 100%;
+  background-color: var(--widget);
+  border-radius: 6px;
+  margin: 15px;
+  padding: 15px;
+}
+
+.booking-steps h1, .settings h1 {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.booking-steps p, .settings p {
+  font-size: .9rem;
+}
+
+.settings input {
+  margin-right: 15px;
+}
+
+.settings label::before {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  background-color: var(--primary);
 }

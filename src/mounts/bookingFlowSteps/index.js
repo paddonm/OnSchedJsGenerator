@@ -18,66 +18,65 @@ const steps = [
 ]
 
 export const mountBookingSteps = target => {
-  addElementToRoot('bookingSteps', target)
-    .then(elBookingSteps => {
-      elBookingSteps.className = 'booking-steps'
+  addElementToRoot('bookingStepsContainer', target)
+    .then(elStepsContainer => {
+      elStepsContainer.className = 'booking-steps-container'
 
-      steps.map(step => {
-        addElementToRoot(step.name, 'bookingSteps')
-          .then(elStep => {
-            elStep.className = 'booking-step'
-            let elRoundRobin = document.querySelector('.booking-steps .booking-step #roundRobin')
-            let elResourcesActive = document.querySelector('.booking-steps .booking-step #resources.active')
-            
-            elStep.onclick = () => {
-              if (elStep.id === 'resources') {
-                console.log(elResourcesActive)
-                elRoundRobin.disabled = true
-              }
-              elStep.classList.toggle('active')
-              mountGenerateFile('home')
-            }
+      addElementToRoot('bookingSteps', 'bookingStepsContainer')
+        .then(elBookingSteps => {
+          elBookingSteps.className = 'booking-steps'
     
-            elStep.innerHTML = `
-              <h1>${step.name}</h1>
-              <p>${step.desc}</p>
-            `
+          steps.map(step => {
+            addElementToRoot(step.name, 'bookingSteps')
+              .then(elStep => {
+                elStep.className = 'booking-step'
+
+                elStep.onclick = () => {
+                  elStep.classList.toggle('active')
+                  mountGenerateFile('home')
+                }
+        
+                elStep.innerHTML = `
+                  <h1>${step.name}</h1>
+                  <p>${step.desc}</p>
+                `
+              })
           })
-      })
-
-      addElementToRoot('settings', 'bookingSteps')
-        .then(elStep => {
-          elStep.className = 'booking-step'
-          elStep.innerHTML = ''
-
-          var title = document.createElement('H1')
-          title.innerText = 'Settings'
-          
-          var desc = document.createElement('P')
-          desc.innerText = 'Online booking settings'
-
-          var roundRobinInput = document.createElement('INPUT')
-          roundRobinInput.id = 'roundRobin'
-          roundRobinInput.setAttribute('name', 'roundRobin')
-          roundRobinInput.setAttribute('type', 'checkbox')
-          roundRobinInput.value = 'roundRobin'
-          roundRobinInput.innerText = 'Online booking settings'
-          roundRobinInput.onchange = e => {
-            if (!document.querySelectorAll('.booking-steps .active#resources').length) {
-              e.target.classList.toggle('active')
-              mountGenerateFile('home')
-            }
-            else console.log('disabled')
-          }
-          
-          var roundRobinLabel = document.createElement('LABEL')
-          roundRobinLabel.setAttribute('for', 'roundRobin')
-          roundRobinLabel.innerText = 'Round robin'
-
-          elStep.appendChild(title)
-          elStep.appendChild(desc)
-          elStep.appendChild(roundRobinInput)
-          elStep.appendChild(roundRobinLabel)
+    
+          addElementToRoot('settings', 'bookingStepsContainer')
+            .then(elStep => {
+              elStep.className = 'settings'
+              elStep.innerHTML = ''
+    
+              var title = document.createElement('H1')
+              title.innerText = 'Settings'
+              
+              var desc = document.createElement('P')
+              desc.innerText = 'Online booking settings'
+    
+              var roundRobinInput = document.createElement('INPUT')
+              roundRobinInput.id = 'roundRobin'
+              roundRobinInput.setAttribute('name', 'roundRobin')
+              roundRobinInput.setAttribute('type', 'checkbox')
+              roundRobinInput.value = 'roundRobin'
+              roundRobinInput.innerText = 'Online booking settings'
+              roundRobinInput.onchange = e => {
+                if (!document.querySelectorAll('.booking-steps .active#resources').length) {
+                  e.target.classList.toggle('active')
+                  mountGenerateFile('home')
+                }
+                else if (e.srcElement.checked) console.log('prompt disabled msg')
+              }
+              
+              var roundRobinLabel = document.createElement('LABEL')
+              roundRobinLabel.setAttribute('for', 'roundRobin')
+              roundRobinLabel.innerText = 'Round robin'
+    
+              elStep.appendChild(title)
+              elStep.appendChild(desc)
+              elStep.appendChild(roundRobinInput)
+              elStep.appendChild(roundRobinLabel)
+            })
         })
     })
 }

@@ -6,9 +6,13 @@
 /* WebpackTemplate color scheme */
 :root {
   --primary: rgb(60, 104, 180);
+  --background: #f9f9fb;
   --primary-dark: rgb(22 63 134);
+  --primary-light: rgb(225 231 240);
+  --widget: #fff;
 }
 
 body {
   font-family: 'Poppins', serif;
+  background-color: var(--background);
 }

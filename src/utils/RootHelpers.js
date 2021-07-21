@@ -1,17 +1,19 @@
-export const addElementToRoot = (elementId, target) => {
+export const addElementToRoot = (elementId, target, type) => {
   var elRoot = document.getElementById('root');
   
   if (target)
     elRoot = document.getElementById(target);
 
-  var newEl = document.createElement('DIV');
+  var newEl = document.createElement(type ? type : 'DIV');
   newEl.id = elementId;
 
   var existingElement = elRoot.querySelector(`#${elementId}`);
 
   return new Promise((resolve, reject) => {
-    if (!existingElement)
-      resolve(elRoot.appendChild(newEl));
+    if (!existingElement) {
+      elRoot.appendChild(newEl)
+      resolve(newEl);
+    }
     else
       resolve(existingElement);
   })
@@ -25,16 +27,4 @@ export const removeElementFromRoot = elementId => {
     return new Promise((resolve, reject) => resolve(element.remove()))
   else
     return new Promise((resolve, reject) => resolve())
-}
-
-export const contentHeight = () => {
-  // create an Observer instance
-  const resizeObserver = new ResizeObserver(entries => {
-    var detail = { contentHeight: entries[0].target.clientHeight }
-    var heightChangeEvent = new CustomEvent('contentHeight', { detail })
-    window.parent.document.dispatchEvent(heightChangeEvent)
-  })
-
-  // start observing a DOM node
-  resizeObserver.observe(document.body)
 }

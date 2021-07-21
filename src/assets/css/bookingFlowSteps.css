@@ -1,0 +1,13 @@
+/* .booking-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.booking-steps .booking-step {
+  max-width: 350px;
+} */
+
+.booking-steps .active {
+  border: 2px solid blue;
+}

@@ -1,12 +1,9 @@
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css");
-@import 'services.css';
-@import 'stripe.css';
+@import 'bookingFlowSteps.css';
 @import 'loading.css';
-@import 'utilities.css';
-@import 'availability.css';
 
 
-/* PetesPier color scheme */
+/* WebpackTemplate color scheme */
 :root {
   --primary: rgb(60, 104, 180);
   --primary-dark: rgb(22 63 134);

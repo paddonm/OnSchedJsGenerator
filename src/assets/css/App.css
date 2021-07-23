@@ -1,0 +1,16 @@
+.content-container {
+  width: 100%;
+  background-color: var(--widget);
+  border-radius: 6px;
+  margin: 15px;
+  padding: 15px;
+}
+
+.content-container:empty {
+  padding: 0px;
+}
+
+.booking-steps-container,
+.warnings-container {
+  display: flex;
+}

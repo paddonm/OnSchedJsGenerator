@@ -1,9 +1,10 @@
-import { addElementToRoot }     from '../../utils/RootHelpers'
-import { FeaturedBookingFlows } from '../../utils/BookingFlows'
+import { addElementToRoot, rootId } from '../../utils/RootHelpers'
+import { FeaturedBookingFlows }     from '../../utils/BookingFlows'
 import { createOuterHtml, 
-         createDownloadLink }   from '../../utils/DownloadHelpers'
+         createDownloadLink }       from '../../utils/DownloadHelpers'
 
-export const mountCommonFlows = (target) => {
+
+export const mountCommonFlows = (target = rootId) => {
   FeaturedBookingFlows.map((flow, idx) => {
     addElementToRoot(`bookingFileExport${idx}`, target, 'A')
       .then(elExport => {
@@ -15,6 +16,6 @@ export const mountCommonFlows = (target) => {
         elExport.innerText = `${flow.title} export`
 
         createDownloadLink(`#bookingFileExport${idx}`, file, filename)
-      })
+      }).catch(error => console.log('err', error))
   })
 }

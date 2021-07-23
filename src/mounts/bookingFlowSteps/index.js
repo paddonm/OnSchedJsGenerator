@@ -1,51 +1,53 @@
-import { addElementToRoot } from "../../utils/RootHelpers"
-import { mountGenerateFile } from "../generateFile"
+import { setState, state }          from "../../utils/AppState"
+import { ConfigBookingFlow } from "../../utils/BookingFlows"
+import { rootId, addElementToRoot } from "../../utils/RootHelpers"
+import { warningTypes }             from '../../utils/WarningUtils'
+import { mountExportBtn }           from "../ExportBtn"
+import { mountWarnings }            from "../Warnings"
 
 
-const steps = [
-  { 
-    name: 'locations', 
-    desc: 'Show a list of all locations for the user to select. Once a location is selected the next step in the booking flow will be displayed.',
-  },
-  { 
-    name: 'resources', 
-    desc: 'Show a list of all resources for the user to select. Once a resource is selected the next step in the booking flow will be displayed.',
-  },
-  { 
-    name: 'services', 
-    desc: 'Show a list of all services for the user to select. Once a service is selected the next step in the booking flow will be displayed.',
-  },
-]
-
-export const mountBookingSteps = target => {
+export const mountBookingSteps = (target = rootId) => {
   addElementToRoot('bookingStepsContainer', target)
     .then(elStepsContainer => {
       elStepsContainer.className = 'booking-steps-container'
 
       addElementToRoot('bookingSteps', 'bookingStepsContainer')
         .then(elBookingSteps => {
-          elBookingSteps.className = 'booking-steps'
-    
-          steps.map(step => {
-            addElementToRoot(step.name, 'bookingSteps')
-              .then(elStep => {
-                elStep.className = 'booking-step'
+          elBookingSteps.className = 'content-container booking-steps'
+          addElementToRoot('bookingStepTitle', 'bookingSteps', 'H1')
+            .then(elBookingStepTitle => {
+              elBookingStepTitle.className = 'booking-step-title' 
+              elBookingStepTitle.innerText = 'Choose your steps'
 
-                elStep.onclick = () => {
-                  elStep.classList.toggle('active')
-                  mountGenerateFile('home')
-                }
-        
-                elStep.innerHTML = `
-                  <h1>${step.name}</h1>
-                  <p>${step.desc}</p>
-                `
+              ConfigBookingFlow.elements.map(step => {
+                addElementToRoot(step.name, 'bookingSteps')
+                  .then(elStep => {
+                    elStep.className = 'booking-step'
+    
+                    elStep.onclick = () => {
+                      var steps
+                      
+                      if (state.steps.includes(step)) 
+                        steps = state.steps.filter(s => s.name !== step.name)
+                      else 
+                        steps = [...state.steps, step]
+                      
+                      elStep.classList.toggle('active')
+                      
+                      setState({ steps })
+                    }
+            
+                    elStep.innerHTML = `
+                      <h1>${step.name}</h1>
+                      <p>${step.desc}</p>
+                    `
+                  }).catch(error => console.log('err', error))
               })
-          })
+            })
     
           addElementToRoot('settings', 'bookingStepsContainer')
             .then(elStep => {
-              elStep.className = 'settings'
+              elStep.className = 'content-container settings'
               elStep.innerHTML = ''
     
               var title = document.createElement('H1')
@@ -61,11 +63,16 @@ export const mountBookingSteps = target => {
               roundRobinInput.value = 'roundRobin'
               roundRobinInput.innerText = 'Online booking settings'
               roundRobinInput.onchange = e => {
-                if (!document.querySelectorAll('.booking-steps .active#resources').length) {
-                  e.target.classList.toggle('active')
-                  mountGenerateFile('home')
+                let warnings = state.warnings
+                
+                if (document.querySelectorAll('.booking-steps .active#resources').length) {
+                  if (e.srcElement.checked)
+                    warnings = [...warnings, warningTypes.roundRobin]
+                  else 
+                    warnings = warnings.filter(warning => warning !== warningTypes.roundRobin)
                 }
-                else if (e.srcElement.checked) console.log('prompt disabled msg')
+                  
+                setState({ warnings, availabilityConfig: { roundRobin: e.srcElement.checked ? 1 : 0 } })
               }
               
               var roundRobinLabel = document.createElement('LABEL')
@@ -76,7 +83,7 @@ export const mountBookingSteps = target => {
               elStep.appendChild(desc)
               elStep.appendChild(roundRobinInput)
               elStep.appendChild(roundRobinLabel)
-            })
-        })
-    })
+            }).catch(error => console.log('err', error))
+        }).catch(error => console.log('err', error))
+    }).catch(error => console.log('err', error))
 }

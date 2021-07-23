@@ -1,11 +1,13 @@
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css");
-@import 'bookingFlowSteps.css';
-@import 'loading.css';
+@import 'BookingFlowSteps.css';
+@import 'ExportBtn.css';
+@import 'App.css';
+@import 'Loading.css';
 
 
 /* WebpackTemplate color scheme */
 :root {
-  --primary: rgb(60, 104, 180);
+  --primary: #4268ee;
   --background: #f9f9fb;
   --primary-dark: rgb(22 63 134);
   --primary-light: rgb(225 231 240);

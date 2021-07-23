@@ -1,34 +1,12 @@
-/* .booking-steps {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-
 .booking-steps .booking-step {
-  max-width: 350px;
-} */
-
-.booking-steps .booking-step {
-  padding: 5px;
-  margin: 5px;
+  padding: 10px 5px;
+  margin:  5px 0;
   cursor: pointer;
 }
 
 .booking-steps .active {
   background-color: var(--primary-light);
   border-radius: 6px;
-}
-
-.booking-steps-container {
-  display: flex;
-}
-
-.booking-steps, .settings {
-  width: 100%;
-  background-color: var(--widget);
-  border-radius: 6px;
-  margin: 15px;
-  padding: 15px;
 }
 
 .booking-steps h1, .settings h1 {

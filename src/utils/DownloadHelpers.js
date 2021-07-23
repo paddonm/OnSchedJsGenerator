@@ -1,69 +1,75 @@
+import { setState, state } from "./AppState"
 import { client } from "./AuthUtils"
 
 
-export const createOuterHtml = data => {
-//console.log(data.elements.filter(elem => elem.step === 2)[0])
+export const createOuterHtml = () => {
+  var availabilityStep = state.steps.length ? state.steps.filter(prevSteps => prevSteps.name === 'availability')[0] : {}
+  const otherSteps = state.steps.filter(prevSteps => prevSteps.name !== 'availability')
 
-const activeIds = []
-document.querySelectorAll('.booking-steps .active').forEach(activeEl => activeIds.push(activeEl.id))
+  Object.keys(state.availabilityConfig)
+    .map(config => {
+      availabilityStep.params[config] = state.availabilityConfig[config]
+    })
+    
+  let sorted = state.steps.sort((a, b) => a.step > b.step ? 1 : -1)
 
-let filtered = data.elements.filter(filteredObj => activeIds.includes(filteredObj.name))
-let sorted = filtered.sort((a, b) => a.step > b.step ? 1 : -1)
-sorted.push({
-  step: 4,
-  name: 'availability',
-  params: { roundRobin: activeIds.includes('roundRobin') ? 1 : 0 },
-  options: {},
-  events: [{ name: 'getAvailability', action: e => {console.log('resources', e.detail)} }]
-})
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Booking Flow | Powered by OnSched</title>
 
-return `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${data.title} Booking Flow | Powered by OnSched</title>
+        <!-- OnSchedJs Installation -->
+        <script type="text/javascript" src="https://js.onsched.com/0.1.0-beta/"></script>
+      </head>
+      <body>
+        <!-- OnSched Elements -->
+        ${sorted.map(el =>
+          `<div id="${el.name}"></div>
+      `).join(" ")}
 
-      <!-- OnSchedJs Installation -->
-      <script type="text/javascript" src="https://js.onsched.com/0.1.0-beta/"></script>
-    </head>
-    <body>
-      <!-- OnSched Elements -->
-      ${sorted.map(el =>
-        `<div id="${el.name}"></div>
-     `).join(" ")}
-
-      <!-- OnSchedJs Javascript -->
-      <script>
-        // Initialize OnSched with clientId and environment 
-        var onsched = OnSched("${client.id}", "${client.env}");
-        
-        // Get instance of elements to use for creating elements
-        var elements = onsched.elements();
-      ${sorted.map((el, idx) => `
-        var ${el.name}Params  = ${el.params ? JSON.stringify(el.params) : '{}'};
-        var ${el.name}Options = ${el.options ? JSON.stringify(el.options) : '{}'};
-        var el${el.name}     = document.getElementById("${el.name}");
-        var ${el.name}       = elements.create("${el.name}", ${el.name}Params, ${el.name}Options);
+        <!-- OnSchedJs Javascript -->
+        <script>
+          // Initialize OnSched with clientId and environment 
+          var onsched = OnSched("${client.id}", "${client.env}");
+          
+          // Get instance of elements to use for creating elements
+          var elements = onsched.elements();
+        ${sorted.map((el, idx) => `
+          var ${el.name}Params  = ${el.params ? JSON.stringify(el.params) : '{}'};
+          var ${el.name}Options = ${el.options ? JSON.stringify(el.options) : '{}'};
+          var el${el.name}     = document.getElementById("${el.name}");
+          var ${el.name}       = elements.create("${el.name}", ${el.name}Params, ${el.name}Options);
+          
+        ${el.events.map(evt => {
+          let next = sorted.length > idx + 1 ? sorted[idx + 1] : null
+          let updateParams = ''
+          let nextMount = next ? `${next.name}.mount("${next.name}");` : ''
         
-      ${el.events.map(evt => {
-        let next = sorted.length > idx ? sorted[idx + 1] : null
-        let nextMount = next ? `${next.name}.mount("${next.name}");` : ''
+          updateParams = `${sorted.map((sortedEl, i) => {
+            let elName = el.name === 'availability' ? 'availability' : el.name.slice(0, -1)
 
-        return `
-        el${el.name}.addEventListener("${evt.name}", e => {
-          ${evt.name.includes('click') ? `el${el.name}.innerHTML = '';
-          ${sorted.map(sortedEl => `Object.assign(${sortedEl.name}Params, e.detail)
-           `).join(" ")}
-          ${nextMount}` : ''}
-        });
-      `}).join(" ")}
-        ${idx === 0 ? `${el.name}.mount("${el.name}");` : ''}`).join(" ")}
-      </script>
-    </body>
-  </html>
+            if (sorted.length > i + 1)
+              return `${sorted[i + 1].name}Params.${elName}Id = e.detail.${elName}Id;
+          `
+            else 
+              return ''
+          }).join(" ")}`
+
+          return `
+          el${el.name}.addEventListener("${evt.name}", e => {
+            ${evt.name.includes('click') ? `el${el.name}.innerHTML = '';
+            ${next ? `${updateParams}
+            ${nextMount}` : ''}` : ''}
+          });
+        `}).join(" ")}
+          ${idx === 0 ? `${el.name}.mount("${el.name}");` : ''}`).join(" ")}
+        </script>
+      </body>
+    </html>
   `
 }
 

@@ -1,13 +1,17 @@
-import { addElementToRoot }  from '../../utils/RootHelpers'
-import { mountBookingSteps } from '../bookingFlowSteps'
-import { mountGenerateFile } from '../generateFile'
-import { mountCommonFlows }  from '../commonFlows'
+import { rootId, addElementToRoot } from '../../utils/RootHelpers'
+import { mountBookingSteps }        from '../BookingFlowSteps'
+import { mountExportBtn }           from '../ExportBtn'
+import { mountWarnings }            from '../Warnings'
+//import { mountCommonFlows }         from '../CommonFlows'
+
 
 export const mountHome = () => {
-  addElementToRoot('home')
+  addElementToRoot(rootId)
     .then(() => {
-      // mountCommonFlows('home')
-      mountBookingSteps('home')
-      mountGenerateFile('home')
+      // mountCommonFlows(rootId)
+      mountBookingSteps(rootId)
+      mountWarnings(rootId)
+      mountExportBtn(rootId)
     })
+    .catch(error => console.log('err', error))
 }

@@ -1,15 +1,18 @@
-export const addElementToRoot = (elementId, target, type) => {
+export const rootId = 'home'
+
+export const addElementToRoot = (elementId = '', target = rootId, type = 'DIV') => {
   var elRoot = document.getElementById('root');
   
-  if (target)
+  if (document.getElementById(target))
     elRoot = document.getElementById(target);
-
-  var newEl = document.createElement(type ? type : 'DIV');
+  
+  var newEl = document.createElement(type);
   newEl.id = elementId;
-
+  
   var existingElement = elRoot.querySelector(`#${elementId}`);
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+
     if (!existingElement) {
       elRoot.appendChild(newEl)
       resolve(newEl);

@@ -7,6 +7,6 @@
 
 import './assets/css/index.css'; 
 
-import { mountHome } from './mounts/home';
+import { mountHome } from './mounts/Home';
 
 mountHome()
